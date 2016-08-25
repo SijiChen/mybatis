@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mapper.CustomerMapper">
+
+    <select id="getById"
+            parameterType="Long"
+            resultType="com.spring.domain.CustomerProfile">
+        select
+        customer_profile_id as id,
+        email as email,
+        first_name as firstName,
+        last_name as lastName
+        from customer_profile
+        where customer_profile_id = #{abc}
+    </select>
+
+    <insert id="createProfile"
+            parameterType="map">
+
+        insert into customer_profile
+        (email, first_name, last_name)
+        values (
+        #{customerProfile.email},
+        #{customerProfile.firstName},
+        #{customerProfile.lastName}
+        )
+
+    </insert>
+
+    <select id="search"
+            parameterType="map"
+            resultType="com.spring.domain.CustomerProfile">
+
+        select
+        customer_profile_id as id,
+        email as email,
+        first_name as firstname,
+        last_name as lastname
+        from customer_profile
+
+        where 1 = 1
+
+        <choose>
+            <when test="searchCriteria.getEmail() !=null ">
+                AND
+                email = #{searchCriteria.email}
+
+            </when>
+            <otherwise>
+                <if test="searchCriteria.getFirstName() !=null ">
+
+                    AND
+                    first_name = #{searchCriteria.firstName}
+
+
+                </if>
+
+                <if test="searchCriteria.getLastName() !=null ">
+                    AND
+                    last_name = #{searchCriteria.lastName}
+
+                </if>
+            </otherwise>
+
+        </choose>
+
+
+    </select>
+
+    <select id="getAll" parameterType="map" resultType="com.spring.domain.CustomerProfile">
+        SELECT
+        customer_profile_id as id,
+        email as email,
+        first_name as firstname,
+        last_name as lastname
+        from customer_profile
+    </select>
+    <update id="update" parameterType="com.spring.domain.CustomerProfile">
+        UPDATE customer_profile SET
+
+                <if test="customerProfile.getEmail()!=null">
+                    email = #{customerProfile.email}
+                </if>
+                <if test="customerProfile.getEmail()!=null and (customerProfile.getFirstName()!=null or customerProfile.getLastName()!=null)">
+                    ,
+                </if>
+                <if test="customerProfile.getFirstName()!=null  ">
+                    first_name = #{customerProfile.firstName}
+                </if>
+                <if test ="customerProfile.getFirstName()!=null and customerProfile.getLastName()!=null">
+                    ,
+                </if>
+                <if test="customerProfile.getLastName()!=null ">
+                    last_name = #{customerProfile.lastName}
+                </if>
+
+        WHERE customer_profile_id=#{id}
+    </update>
+</mapper>
